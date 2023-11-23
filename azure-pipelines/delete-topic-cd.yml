@@ -1,0 +1,25 @@
+parameters:
+  - name: topicJsonFile
+    default: ./topic.json
+
+name: $(date:yyyyMMdd)$(rev:.r) - $(build.sourceBranch) - ${{ replace(replace(parameters.topicJsonFile,'/','_'),'\','_') }}
+
+trigger: none
+
+resources:
+  repositories:  
+    - repository: kafka-sharedTemplates
+      name: hn-gtsdevops/kafka-sharedTemplates
+      endpoint: hn-gtsdevops
+      type: github
+      ref: feature/containerAgent
+
+    - repository: common-sharedTemplates
+      name: hn-gtsdevops/common-sharedTemplates
+      endpoint: hn-gtsdevops
+      type: github
+
+extends: 
+  template: /extension/kafka/delete-kafka-topic.yml@kafka-sharedTemplates
+  parameters:
+    topicJsonFile: ${{ parameters.topicJsonFile }}
